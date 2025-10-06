@@ -10,6 +10,11 @@ exports.register = async (req, res) => {
       return res.status(400).json({ message: "Todos los campos son requeridos" });
     }
 
+    const exists = await User.findOne({ where: { email } });
+    if (exists) {
+      return res.status(409).json({ message: "El correo ya está registrado" });
+    }
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({ email, password: hashedPassword });
